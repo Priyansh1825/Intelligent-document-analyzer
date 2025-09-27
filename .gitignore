@@ -1,0 +1,30 @@
+# Virtual environment
+venv/
+.env/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+
+# Logs
+*.log
+
+# Large files
+*.pdf
+*.docx
+*.pptx
+
+# But keep sample documents
+!data/sample_documents/sample.txt

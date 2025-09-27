@@ -1,0 +1,5 @@
+This is a sample document for testing the document analyzer.
+The document analyzer uses artificial intelligence to process and understand text content.
+It can extract keywords, summarize content, and answer questions about the document.
+This technology is useful for researchers, students, and professionals who need to analyze large amounts of text quickly.
+Artificial intelligence has revolutionized how we process information.
