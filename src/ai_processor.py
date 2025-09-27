@@ -1,4 +1,9 @@
 from typing import Dict
+import warnings
+
+# Suppress specific warnings
+warnings.filterwarnings("ignore", category=UserWarning)
+warnings.filterwarnings("ignore", category=FutureWarning)
 
 class AIProcessor:
     def __init__(self):
@@ -7,8 +12,10 @@ class AIProcessor:
         self._setup_pipelines()
     
     def _setup_pipelines(self):
+        """Initialize AI models with error handling"""
         try:
-            from transformers import pipeline
+            from transformers import pipeline # type: ignore
+            # Use a smaller model for faster processing
             self.summarizer = pipeline(
                 "summarization", 
                 model="facebook/bart-large-cnn",
@@ -17,18 +24,25 @@ class AIProcessor:
             
             self.qa_pipeline = pipeline(
                 "question-answering",
-                model="distilbert-base-cased-distilled-squad"
+                model="distilbert-base-cased-distilled-squad",
+                tokenizer="distilbert-base-cased-distilled-squad"
             )
-        except Exception as e:
-            print(f"AI models not available: {e}")
+        except ImportError as e:
+            print(f"Transformers not available: {e}")
             print("Using fallback text analysis only")
+        except Exception as e:
+            print(f"Error loading AI models: {e}")
     
     def summarize_text(self, text: str, max_length: int = 150, min_length: int = 30) -> str:
+        """Generate text summary"""
         if not self.summarizer:
             # Simple fallback summary - first 3 sentences
-            from nltk.tokenize import sent_tokenize
-            sentences = sent_tokenize(text)
-            return " ".join(sentences[:3]) if len(sentences) > 3 else text[:200] + "..."
+            try:
+                from nltk.tokenize import sent_tokenize # type: ignore
+                sentences = sent_tokenize(text)
+                return " ".join(sentences[:3]) if len(sentences) > 3 else text[:200] + "..."
+            except ImportError:
+                return text[:200] + "..."
         
         if len(text) > 1024:
             text = text[:1024]
@@ -40,9 +54,10 @@ class AIProcessor:
             return f"Summary: {text[:200]}..."
     
     def answer_question(self, context: str, question: str) -> Dict:
+        """Answer question based on document content"""
         if not self.qa_pipeline:
             return {
-                "answer": "Question-answering requires additional AI models. Please install transformers library.",
+                "answer": "Question-answering requires additional AI models. Please install transformers: pip install transformers",
                 "confidence": 0
             }
         
@@ -56,6 +71,7 @@ class AIProcessor:
             return {"answer": f"Error: {str(e)}", "score": 0}
     
     def analyze_document(self, text: str) -> Dict:
+        """Comprehensive document analysis"""
         from src.text_analyzer import TextAnalyzer
         
         analyzer = TextAnalyzer()
